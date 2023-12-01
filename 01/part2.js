@@ -1,6 +1,6 @@
 const fs = require("fs");
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-const DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+const alpha = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
 const stdinBuffer = fs.readFileSync(process.stdin.fd);
 const input = stdinBuffer.toString();
@@ -11,8 +11,8 @@ rows.forEach(row => {
     if (row === '') return;
 
     let indices = [];
-    DIGITS.forEach((DIGIT, i) => {
-        const res = findIndices(row, DIGIT);
+    alpha.forEach((a, i) => {
+        const res = findIndices(row, a);
 
         res.forEach(element => {
             const digit = digits[i]
@@ -33,14 +33,12 @@ rows.forEach(row => {
     let first = indices[0]
     let last = indices[indices.length - 1]
     let num = Number(first.digit + last.digit)
-
-    console.log({ row, first, last });
     results += num;
 })
 
 console.log(results);
 
-
+// Recursively finds all indices of a target string inside of an array
 function findIndices(word, target, position = 0) {
     let result = [];
 

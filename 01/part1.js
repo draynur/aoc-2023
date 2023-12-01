@@ -1,11 +1,7 @@
 const fs = require("fs");
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-
-// Read stdin
-const stdinBuffer = fs.readFileSync(0);
-
+const stdinBuffer = fs.readFileSync(process.stdin.fd);
 const input = stdinBuffer.toString();
-
 const rows = input.split("\n");
 
 var results = 0
