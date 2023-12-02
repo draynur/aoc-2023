@@ -8,16 +8,16 @@ var results = 0
 
 // Recursively finds all indices of a target string inside of an array
 function findIndices(word, target, position = 0) {
-    let result = [];
+    let carry = "";
 
     const index = word.indexOf(target, position)
 
     if (index >= 0) {
-        result.push(index);
-        result.push(findIndices(word, target, index + 1));
+        carry += ("result" + ",")
+        carry += (findIndices(word, target, index + 1) + ",");
     }
 
-    return result.flat();
+    return carry.split(',');
 }
 
 rows.forEach(row => {
