@@ -25,27 +25,28 @@ rows.forEach(row => {
 
     let indices = [];
     alpha.forEach((a, i) => {
-        const res = findIndices(row, a);
+        const found_indices = findIndices(row, a);
 
-        res.forEach(index => {
-            const digit = digits[i];
+        found_indices.forEach(index => {
+            const digit = digits[index];
             indices.push({ index, digit });
         });
     });
 
     digits.forEach(digit => {
-        const res = findIndices(row, digit);
+        const found_indices = findIndices(row, digit);
 
-        res.forEach(index => {
+        found_indices.forEach(index => {
+            const digit = digits[index];
             indices.push({ index, digit });
         });
     });
 
     indices.sort((a, b) => a.index - b.index);
 
-    let first = indices[0];
-    let last = indices[indices.length - 1];
-    let num = Number(first.digit + last.digit);
+    const first = indices[0];
+    const last = indices[indices.length - 1];
+    const num = Number(first.digit + last.digit);
     results += num;
 })
 
