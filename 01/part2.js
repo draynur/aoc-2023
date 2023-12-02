@@ -6,14 +6,14 @@ const input = stdinBuffer.toString();
 const rows = input.split("\n");
 var results = 0
 
-// Recursively finds all indices of a target string inside of an array
+// Recursively finds all indices of a target string inside of a string 
 function findIndices(word, target, position = 0) {
     let carry = "";
 
-    const index = word.indexOf(target, position)
+    const index = word.indexOf(target, position);
 
     if (index >= 0) {
-        carry += ("result" + ",")
+        carry += (index + ",");
         carry += (findIndices(word, target, index + 1) + ",");
     }
 
