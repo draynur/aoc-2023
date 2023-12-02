@@ -1,52 +1,49 @@
 const fs = require("fs");
+const os = require("os");
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-const alpha = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 const stdinBuffer = fs.readFileSync(process.stdin.fd);
 const input = stdinBuffer.toString();
-const rows = input.split("\n");
-var results = 0
+const rows = input.split(os.EOL);
 
-// Recursively finds all indices of a target string inside of a string 
 function findIndices(word, target, position = 0) {
-    let carry = "";
+    let result = [];
 
-    const index = word.indexOf(target, position);
+    const index = word.indexOf(target, position)
 
     if (index >= 0) {
-        carry += (index + ",");
-        carry += (findIndices(word, target, index + 1) + ",");
+        result.push(index);
+        result.push(findIndices(word, target, index + 1));
     }
 
-    return carry.split(',');
+    return result.flat();
 }
 
+var results = 0;
 rows.forEach(row => {
     if (row === '') return;
 
     let indices = [];
-    alpha.forEach((a, i) => {
-        const found_indices = findIndices(row, a);
 
-        found_indices.forEach(index => {
-            const digit = digits[index];
-            indices.push({ index, digit });
+    function findNumbersInRow(numbers, row) {
+        numbers.forEach((number, i) => {
+            const found_indices = findIndices(row, number);
+
+            found_indices.forEach(index => {
+                indices.push({ index, digit: digits[i] });
+            });
         });
-    });
+    }
 
-    digits.forEach(digit => {
-        const found_indices = findIndices(row, digit);
-
-        found_indices.forEach(index => {
-            const digit = digits[index];
-            indices.push({ index, digit });
-        });
-    });
+    findNumbersInRow(DIGITS, row);
+    findNumbersInRow(digits, row);
 
     indices.sort((a, b) => a.index - b.index);
 
     const first = indices[0];
     const last = indices[indices.length - 1];
     const num = Number(first.digit + last.digit);
+
     results += num;
 })
 
