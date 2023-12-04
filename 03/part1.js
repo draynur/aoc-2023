@@ -4,30 +4,92 @@ const stdinBuffer = fs.readFileSync(process.stdin.fd);
 const input = stdinBuffer.toString();
 const rows = input.split(os.EOL);
 
-const regex_pattern_before = /[^a-zA-Z0-9_\.]\d+/g;
-const regex_pattern_after = /d+[^a-zA-Z0-9_\.]/g;
+const regex_pattern_num = /\d+/g;
+const regex_pattern_symbol = /[^a-zA-Z0-9_.\n]/g;
 
-const regex_strip = /[^\d]/g;
-
+var numbers = [];
+var symbols = [];
 var results = 0;
 
-function logMatches(matches) {
+function handleSymbols(matches, line_number) {
     for (const match of matches) {
-        console.log(
-            `Found ${match[0]} start=${match.index} end=${match.index + match[0].length}.`,
-        );
-        let found = match[0];
-        let answer = found.replace(regex_strip, '');
-
-        console.log({ answer });
+        symbols.push({ ln: line_number, index: match.index, word: match[0] });
     }
 }
 
-rows.forEach(row => {
+function handleNumbers(matches, line_number) {
+    for (const match of matches) {
+        numbers.push({ ln: line_number, start: match.index, end: match.index + match[0].length - 1, word: match[0], found: false });
+    }
+}
+
+function checkRowForWinner(row, winner_index) {
+    let results = numbers.filter((number, index) => {
+        if (number.ln !== row) {
+            return false;
+        }
+
+        if (number.found) {
+            return false;
+        }
+
+        let found = false;
+
+        if ((winner_index - 1 <= number.start) && (winner_index + 1 >= number.start)) {
+            found = true;
+        } else if ((winner_index - 1 <= number.end) && (winner_index + 1 >= number.end)) {
+            found = true;
+        }
+
+        if (found) {
+            numbers[index].found = true;
+        }
+
+        return found;
+    });
+
+    return results;
+}
+
+rows.forEach((row, index) => {
     if (row == '') return;
 
-    const before_results = [...row.matchAll(regex_pattern_before)];
-    const after_results = [...row.matchAll(regex_pattern_after)];
-    logMatches(before_results);
-    logMatches(after_results);
+    const num_results = [...row.matchAll(regex_pattern_num)];
+    const sym_results = [...row.matchAll(regex_pattern_symbol)];
+
+    handleSymbols(sym_results, index + 1);
+    handleNumbers(num_results, index + 1);
 });
+
+symbols.forEach(symbol => {
+    let above_results = []
+    let inline_results = []
+    let below_results = []
+    let total_results = []
+
+    if (symbol.ln === 1) {
+        // First line, dont check above
+        inline_results = checkRowForWinner(symbol.ln, symbol.index);
+        below_results = checkRowForWinner(symbol.ln + 1, symbol.index);
+    } else if (symbol.ln >= rows.length - 1) {
+        // Last line, don't check below
+        above_results = checkRowForWinner(symbol.ln - 1, symbol.index);
+        inline_results = checkRowForWinner(symbol.ln, symbol.index);
+    } else {
+        // Normal checking
+        above_results = checkRowForWinner(symbol.ln - 1, symbol.index);
+        inline_results = checkRowForWinner(symbol.ln, symbol.index);
+        below_results = checkRowForWinner(symbol.ln + 1, symbol.index);
+    }
+
+    above_results.forEach(el => total_results.push(el.word));
+    inline_results.forEach(el => total_results.push(el.word));
+    below_results.forEach(el => total_results.push(el.word));
+
+    total_results.forEach(res => {
+        results += Number(res);
+    });
+
+});
+
+console.log(results);
