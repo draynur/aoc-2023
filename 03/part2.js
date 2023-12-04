@@ -41,9 +41,9 @@ function checkRowForWinner(row, winner_index) {
             found = true;
         }
 
-        // if (found) {
-        //     numbers[index].found = true;
-        // }
+        if (found) {
+            numbers[index].found = true;
+        }
 
         return found;
     });
@@ -60,8 +60,6 @@ rows.forEach((row, index) => {
     handleSymbols(sym_results, index + 1);
     handleNumbers(num_results, index + 1);
 });
-
-console.log({ symbols });
 
 symbols.forEach(symbol => {
     let above_results = []
@@ -84,17 +82,12 @@ symbols.forEach(symbol => {
         below_results = checkRowForWinner(symbol.ln + 1, symbol.index);
     }
 
-    console.log({ above_results, inline_results, below_results });
-
     above_results.forEach(el => total_results.push(el.word));
     inline_results.forEach(el => total_results.push(el.word));
     below_results.forEach(el => total_results.push(el.word));
 
     if (total_results.length === 2) {
-        results += Number(total_results[0] + total_results[1]);
-        // total_results.forEach(res => {
-        //     results += Number(res);
-        // });
+        results += Number(total_results[0]) * Number(total_results[1]);
     }
 
 });
