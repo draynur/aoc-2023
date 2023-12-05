@@ -2,7 +2,6 @@ const fs = require("fs");
 const stdinBuffer = fs.readFileSync(process.stdin.fd);
 const input = stdinBuffer.toString();
 const rows = input.split("\n");
-
 const num_regex = /\d+/g;
 
 var results = 0
@@ -16,8 +15,6 @@ rows.forEach(row => {
     const [left, right] = row.split(":");
 
     const [winners, found] = right.split("|");
-
-
 
     for (const winner of winners.matchAll(num_regex)) {
         winning_numbers.push(winner[0]);
