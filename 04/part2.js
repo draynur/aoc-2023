@@ -29,10 +29,9 @@ rows.forEach((row, index) => {
         numbers,
         winning_numbers,
         index,
-        extra: 0,
+        count: 0,
         winner: false
     });
-
 });
 
 cards.forEach((card, index) => {
@@ -46,15 +45,13 @@ cards.forEach((card, index) => {
 
     if (wins) {
         for (let i = index; (i <= index + wins) && (i < cards.length - 1); i++) {
-            cards[i].extra += 1;
+            cards[i].count += 1;
         }
     }
 });
 
 const result = cards.reduce((previous, current) => {
-    // return current.winner ? (previous + current.extra + 1) : previous;
-    return previous + current.extra + 1;
+    return previous + current.count + 1;
 }, 0)
 
-console.log(util.inspect({ cards }, false, null, true))
-console.log(result);
+console.log(util.inspect({ cards: cards.splice(cards.length - 10) }, false, null, true))
